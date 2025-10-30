@@ -3,38 +3,36 @@
 ## About the sample
 This example illustrates how to drag and drop items in WinUI TreeView (SfTreeView)?
 
-[WinUI TreeView](https://www.syncfusion.com/winui-controls/treeview) (SfTreeView) allows drag and drop the items within and between controls by setting the CanDrag and AllowDrop properties to true. It is also possible to drag and drop the items between Treeview and other controls such as **ListView** and **SfDataGrid**.
+[WinUI TreeView](https://www.syncfusion.com/winui-controls/treeview) (SfTreeView) allows drag and drop the items within and between controls by setting the CanDrag and AllowDrop properties to true. It is also possible to drag and drop the items between Treeview and other controls such as ListView and WPF DataGrid (SfDataGrid).
 
 ```XML
-
-<treeView:SfTreeView   x:Name="treeView"
-                       Width="400"
-                       Height="500"
-                       CanDrag="True"
-                       AllowDrop="True"
-                       AutoExpandMode="AllNodes"
-                       ChildPropertyName="Childs"
-                       BorderBrush="LightGray"
-                       IsAnimationEnabled="True"
-                       BorderThickness="1"
-                       FullRowSelect="True"
-                       ItemsSource="{Binding Nodes1}">
-            <treeView:SfTreeView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <ContentPresenter Width="20"
-                                          Height="20"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Center"
-                                          ContentTemplate="{Binding ImageTemplate}" />
-                        <TextBlock        Margin="5"
-                                          VerticalAlignment="Center"
-                                          Text="{Binding Header}" />
-                    </StackPanel>
-                </DataTemplate>
-            </treeView:SfTreeView.ItemTemplate>
-</treeView:SfTreeView>
-
+<treeView:SfTreeView x:Name="treeView"
+                     Width="400"
+                     Height="500"
+                     CanDrag="True"
+                     AllowDrop="True"
+                     AutoExpandMode="AllNodes"
+                     ChildPropertyName="Childs"
+                     BorderBrush="LightGray"
+                     IsAnimationEnabled="True"
+                     BorderThickness="1"
+                     FullRowSelect="True"
+                     ItemsSource="{Binding Nodes1}">
+     <treeView:SfTreeView.ItemTemplate>
+         <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+                <ContentPresenter Width="20"
+                                  Height="20"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Center"
+                                  ContentTemplate="{Binding ImageTemplate}" />
+                 <TextBlock Margin="5"
+                            VerticalAlignment="Center"
+                            Text="{Binding Header}" />
+             </StackPanel>
+          </DataTemplate>
+      </treeView:SfTreeView.ItemTemplate>
+ </treeView:SfTreeView>
 ```
 
 ![Shows the drag and drop in SfTreeView](TreeViewDragDrop.gif)
@@ -99,59 +97,61 @@ treeView.ItemDropping += OnFirstTreeViewItemDropping;
 treeView1.ItemDropping += OnItemDropping;
 treeView1.ItemDropped += OnItemDropped;
 
-private void OnItemDropped(object sender, Syncfusion.UI.Xaml.TreeView.TreeViewItemDroppedEventArgs e)
-{
-            var parentNode = e.TargetNode.ParentNode;
-            var collection = parentNode.ChildNodes;
-            var record = e.DraggingNodes[0].Content as Folder;
-            int count = 0;
-            foreach (var child in parentNode.ChildNodes)
-            {
-                var childNode = child.Content as Folder;
-                if (childNode.FileName == record.FileName)
-                {
-                    count++;
-                    if (count > 1)
-                    {
-                        // Remove dropped node if the parent has the same node in it
-                        collection.Remove(child);
-                        return;
-                    }
+treeView.ItemDragStarting += OnItemDragStarting;
+ treeView.ItemDropping += OnFirstTreeViewItemDropping;
+ treeView1.ItemDropping += OnItemDropping;
+ treeView1.ItemDropped += OnItemDropped;
+ 
+ private void OnItemDropped(object sender, TreeViewItemDroppedEventArgs e)
+ {
+     var parentNode = e.TargetNode.ParentNode;
+     var collection = parentNode.ChildNodes;
+     var record = e.DraggingNodes[0].Content as Folder;
+     int count = 0;
+     foreach (var child in parentNode.ChildNodes)
+     {
+         var childNode = child.Content as Folder;
+         if (childNode.FileName == record.FileName)
+         {
+             count++;
+             if (count > 1)
+             {
+                 // Remove dropped node if the parent has the same node in it
+                 collection.Remove(child);
+                 return;
+             }
+          }
+     }
+ }
 
-                }
-            }
-}
+ private void OnItemDropping(object sender,TreeViewItemDroppingEventArgs e)
+ {
+     //Restrict the dropping for drop position as above
+     if (e.DropPosition == Syncfusion.UI.Xaml.TreeView.DropPosition.DropAbove)
+         e.Handled = true;
 
-private void OnItemDropping(object sender, Syncfusion.UI.Xaml.TreeView.TreeViewItemDroppingEventArgs e)
-{
-            //Restrict the dropping for drop position as above
-            if (e.DropPosition == Syncfusion.UI.Xaml.TreeView.DropPosition.DropAbove)
-                e.Handled = true;
+      //Restrict the dropping on certain nodes
+     var record = e.TargetNode.Content as Folder;
+     if (record.FileName == "Documents")
+         e.Handled = true;
+ }
 
-            //Restrict the dropping on certain nodes
-            var record = e.TargetNode.Content as Folder;
-            if (record.FileName == "Documents")
-                e.Handled = true;
-}
+ private void OnItemDragStarting(object sender, TreeViewItemDragStartingEventArgs e)
+ {
+     //Restrict the dragging for certain node
+     var record = e.DraggingNodes[0].Content as Folder;
+     if (record.FileName == "Downloads")
+         e.Cancel = true;
+ }
 
-private void OnItemDragStarting(object sender, Syncfusion.UI.Xaml.TreeView.TreeViewItemDragStartingEventArgs e)
-{
-            //Restrict the dragging for certain node
-            var record = e.DraggingNodes[0].Content as Folder;
-            if (record.FileName == "Downloads")
-                e.Cancel = true;
-}
-
-private void OnFirstTreeViewItemDropping(object sender, Syncfusion.UI.Xaml.TreeView.TreeViewItemDroppingEventArgs e)
-{
-            //Restrict the dropping in first treeview
-            e.Handled = true;
-}
+ private void OnFirstTreeViewItemDropping(object sender, TreeViewItemDroppingEventArgs e)
+ {
+     //Restrict the dropping in first treeview
+     e.Handled = true;
+ }
 
 ```
   
 ![Shows the drag and drop between two TreeView](DragDropBetweenTwoTreeView.gif)
  
 Take a moment to peruse the [WinUI TreeView - Drag and Drop](https://help.syncfusion.com/winui/treeview/drag-and-drop) documentation, to learn more about drag and drop with code examples.
-  
-
