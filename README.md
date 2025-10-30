@@ -3,7 +3,7 @@
 ## About the sample
 This example illustrates how to drag and drop items in WinUI TreeView (SfTreeView)?
 
-[WinUI TreeView](https://www.syncfusion.com/winui-controls/treeview) (SfTreeView) allows drag and drop the items within and between controls by setting the [CanDrag](https://docs.microsoft.com/en-us/windows/winui/api/microsoft.ui.xaml.uielement.candrag?view=winui-3.0) and [AllowDrop](https://docs.microsoft.com/en-us/windows/winui/api/microsoft.ui.xaml.uielement.allowdrop?view=winui-3.0) properties to true. It is also possible to drag and drop the items between Treeview and other controls such as **ListView** and **SfDataGrid**.
+[WinUI TreeView](https://www.syncfusion.com/winui-controls/treeview) (SfTreeView) allows drag and drop the items within and between controls by setting the CanDrag and AllowDrop properties to true. It is also possible to drag and drop the items between Treeview and other controls such as **ListView** and **SfDataGrid**.
 
 ```XML
 
